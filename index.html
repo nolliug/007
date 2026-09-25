@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cinematic Horology of James Bond 007 | jamesbond.watch</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bond: {
+                            bg: '#f8f6f0',
+                            card: '#ffffff',
+                            text: '#1a1a1a',
+                            muted: '#616161',
+                            gold: '#c5a059',
+                            goldhover: '#b08b46',
+                            dark: '#0f172a',
+                            accent: '#8b0000',
+                            border: '#e2e8f0'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c5a059;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-bond-bg text-bond-text font-sans antialiased min-h-screen flex flex-col">
+
+<!-- Chosen Palette: Warm Vintage Horology (Cream #f8f6f0, Brass Gold #c5a059, Dark Navy #0f172a, Crimson Accent #8b0000) -->
+
+<!-- Application Structure Plan:
+     1. Navigation Bar: Persistent sticky header with section anchor links, quick search, and active state highlights.
+     2. Hero & Quick Stats Dashboard: High-level metrics summarizing 60 years of Bond timepieces (25 films, 6 actors, 8 major watch brands including Vertex, Q-branch modified count).
+     3. Interactive Chronological Watch Catalogue: Master database with search, filters (Brand including Vertex, Actor, Gadget availability), view toggle (Grid Cards vs. Data Table), and detail modal.
+     4. Horological Analytics & Brand Trends: Dynamic Chart.js visualizations breakdown (Brand Market Share per Era, Watch Types distribution, Vintage Valuation Premiums).
+     5. Q-Branch Tech Vault: Spotlight interactive gallery on iconic gadget-modified Bond watches (Geiger counter, Buzz-saw, Laser, EMP, Grappling Hook).
+     6. Era & Narrative Deep Dives: Tabbed accordion explorer detailing history, set design choices, and cultural impact from Connery to Craig.
+     7. Vintage Market & Auction Analysis: Insights on secondary market valuations and real-world auction records.
+-->
+
+<!-- Visualization & Content Choices:
+     - Metrics Cards: Key metrics -> Immediate high-level summary -> Dynamic counters -> HTML/CSS.
+     - Brand Market Share: Donut Chart -> Chart.js Canvas -> Interactive hover tooltips showing count and percentage (updated with Vertex).
+     - Watch Count per Bond Era: Stacked Bar Chart -> Chart.js Canvas -> Compare brand selection per actor era.
+     - Vintage Auction Growth: Line Chart -> Chart.js Canvas -> Retail vs. Historical Auction Prices.
+     - Interactive Table & Cards: Vanilla JS filtering -> Real-time feedback -> DOM manipulation.
+     - NO SVG graphics or Mermaid JS used. Visual icons rendered via Unicode/HTML badges.
+-->
+
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-bond-dark text-bond-gold text-xs py-2 px-4 text-center font-medium tracking-widest uppercase">
+        ◆ Official EON Productions Filmography Horology Matrix | JAMESBOND.WATCH ◆
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-bond-border shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-bond-dark text-bond-gold flex items-center justify-center font-serif text-xl font-bold border border-bond-gold">
+                        007
+                    </div>
+                    <div>
+                        <span class="font-serif text-lg sm:text-xl font-bold tracking-tight text-bond-dark block">JAMESBOND.WATCH</span>
+                        <span class="text-xs text-bond-muted block font-medium -mt-1">Cinematic Horology Archive</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-6 text-sm font-medium text-bond-muted">
+                    <a href="#catalogue" class="hover:text-bond-gold transition-colors">Catalogue</a>
+                    <a href="#analytics" class="hover:text-bond-gold transition-colors">Analytics</a>
+                    <a href="#gadget-vault" class="hover:text-bond-gold transition-colors">Q-Vault</a>
+                    <a href="#eras" class="hover:text-bond-gold transition-colors">Cinematic Eras</a>
+                    <a href="#market" class="hover:text-bond-gold transition-colors">Auction Market</a>
+                </nav>
+
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="md:hidden text-bond-dark focus:outline-none p-2 rounded-lg border border-bond-border" aria-label="Toggle Navigation">
+                    ☰
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Dropdown Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-bond-border px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+            <a href="#catalogue" class="block py-2 text-bond-dark hover:text-bond-gold">Catalogue</a>
+            <a href="#analytics" class="block py-2 text-bond-dark hover:text-bond-gold">Analytics</a>
+            <a href="#gadget-vault" class="block py-2 text-bond-dark hover:text-bond-gold">Q-Vault Gadgets</a>
+            <a href="#eras" class="block py-2 text-bond-dark hover:text-bond-gold">Cinematic Eras</a>
+            <a href="#market" class="block py-2 text-bond-dark hover:text-bond-gold">Auction Market</a>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO SECTION -->
+        <section class="bg-gradient-to-br from-bond-dark to-slate-800 text-white rounded-2xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+            <div class="relative z-10 max-w-3xl space-y-4">
+                <div class="inline-block bg-bond-gold/20 text-bond-gold border border-bond-gold/40 text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider">
+                    Comprehensive Horological Report
+                </div>
+                <h1 class="font-serif text-3xl sm:text-5xl font-bold text-white leading-tight">
+                    The Cinematic Horology of James Bond
+                </h1>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Explore six decades of wristwatches worn by MI6 agent 007 across twenty-five official films. From Sean Connery's rugged Rolex Submariner and classic military issue Vertex timepieces to Roger Moore's digital quartz Seikos and Daniel Craig's titanium Omega Seamasters, discover how cinematic horology evolved alongside filmmaking history.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-4">
+                    <a href="#catalogue" class="bg-bond-gold hover:bg-bond-goldhover text-bond-dark font-semibold px-6 py-3 rounded-lg transition-all text-sm shadow-md inline-flex items-center space-x-2">
+                        <span>Explore Full Catalogue</span>
+                        <span>↓</span>
+                    </a>
+                    <a href="#gadget-vault" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium px-6 py-3 rounded-lg transition-all text-sm">
+                        Q-Branch Gadget Vault
+                    </a>
+                </div>
+            </div>
+
+            <!-- Key Metrics Stats Row -->
+            <div class="mt-8 pt-8 border-t border-slate-700/80 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
+                    <div class="text-3xl font-serif font-bold text-bond-gold" id="stat-films">25</div>
+                    <div class="text-xs text-slate-400 font-medium uppercase tracking-wider mt-1">Official EON Films</div>
+                </div>
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
+                    <div class="text-3xl font-serif font-bold text-bond-gold" id="stat-watches">31+</div>
+                    <div class="text-xs text-slate-400 font-medium uppercase tracking-wider mt-1">Identified Reference Models</div>
+                </div>
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
+                    <div class="text-3xl font-serif font-bold text-bond-gold" id="stat-brands">8</div>
+                    <div class="text-xs text-slate-400 font-medium uppercase tracking-wider mt-1">Watch Trademarks/Brands</div>
+                </div>
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
+                    <div class="text-3xl font-serif font-bold text-bond-gold" id="stat-gadgets">12</div>
+                    <div class="text-xs text-slate-400 font-medium uppercase tracking-wider mt-1">Q-Branch Gadgetized Models</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: CHRONOLOGICAL WATCH CATALOGUE -->
+        <section id="catalogue" class="scroll-mt-24 space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-bond-border shadow-sm space-y-6">
+                <!-- Section Header -->
+                <div>
+                    <div class="flex items-center space-x-2 text-bond-gold text-xs font-bold uppercase tracking-wider">
+                        <span>◆ Catalogue Matrix</span>
+                    </div>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-bond-dark mt-1">
+                        Chronological Filmography & Timepieces
+                    </h2>
+                    <p class="text-bond-muted text-sm mt-2">
+                        This section lists every watch worn on screen by James Bond in chronological order from 1962 to 2021. You can filter by brand, actor, or gadget capability, search by keywords, and switch between card and table views.
+                    </p>
+                </div>
+
+                <!-- Filters & Search Controls -->
+                <div class="bg-bond-bg p-4 rounded-xl border border-bond-border flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+                    <!-- Search Input -->
+                    <div class="relative flex-grow max-w-md">
+                        <input type="text" id="search-input" placeholder="Search title, watch model, ref #, feature..." 
+                               class="w-full pl-9 pr-4 py-2 text-sm bg-white border border-bond-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bond-gold/50">
+                        <span class="absolute left-3 top-2.5 text-bond-muted text-sm">🔍</span>
+                    </div>
+
+                    <!-- Filter Dropdowns -->
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <!-- Brand Filter -->
+                        <select id="filter-brand" class="px-3 py-2 bg-white border border-bond-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bond-gold/50 text-bond-text">
+                            <option value="ALL">All Brands</option>
+                            <option value="Rolex">Rolex</option>
+                            <option value="Omega">Omega</option>
+                            <option value="Seiko">Seiko</option>
+                            <option value="Gruen">Gruen</option>
+                            <option value="Vertex">Vertex</option>
+                            <option value="TAG Heuer">TAG Heuer</option>
+                            <option value="Breitling">Breitling</option>
+                            <option value="Hamilton">Hamilton</option>
+                        </select>
+
+                        <!-- Actor Filter -->
+                        <select id="filter-actor" class="px-3 py-2 bg-white border border-bond-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bond-gold/50 text-bond-text">
+                            <option value="ALL">All Actors</option>
+                            <option value="Sean Connery">Sean Connery</option>
+                            <option value="George Lazenby">George Lazenby</option>
+                            <option value="Roger Moore">Roger Moore</option>
+                            <option value="Timothy Dalton">Timothy Dalton</option>
+                            <option value="Pierce Brosnan">Pierce Brosnan</option>
+                            <option value="Daniel Craig">Daniel Craig</option>
+                        </select>
+
+                        <!-- Gadget Filter -->
+                        <select id="filter-gadget" class="px-3 py-2 bg-white border border-bond-border rounded-lg focus:outline-none focus:ring-2 focus:ring-bond-gold/50 text-bond-text">
+                            <option value="ALL">All Timepieces</option>
+                            <option value="GADGET">Q-Gadgets Only</option>
+                            <option value="STANDARD">Standard Horology</option>
+                        </select>
+
+                        <!-- View Toggle -->
+                        <div class="flex bg-white rounded-lg border border-bond-border p-1 space-x-1">
+                            <button id="view-grid-btn" class="px-3 py-1 text-xs rounded font-medium bg-bond-dark text-white">Cards</button>
+                            <button id="view-table-btn" class="px-3 py-1 text-xs rounded font-medium text-bond-muted hover:text-bond-dark">Table</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Filter Tags & Count -->
+                <div class="flex justify-between items-center text-xs text-bond-muted">
+                    <span>Showing <strong id="visible-count" class="text-bond-dark">26</strong> entries</span>
+                    <button id="reset-filters-btn" class="text-bond-gold hover:underline font-semibold hidden">Reset All Filters</button>
+                </div>
+
+                <!-- CARDS VIEW CONTAINER -->
+                <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards dynamically populated via JS -->
+                </div>
+
+                <!-- TABLE VIEW CONTAINER (Hidden by default) -->
+                <div id="table-container" class="hidden overflow-x-auto border border-bond-border rounded-xl">
+                    <table class="w-full text-left text-sm text-bond-text">
+                        <thead class="bg-bond-dark text-white uppercase text-xs font-serif tracking-wider">
+                            <tr>
+                                <th class="py-3 px-4">Year & Film</th>
+                                <th class="py-3 px-4">Actor</th>
+                                <th class="py-3 px-4">Trademark / Brand</th>
+                                <th class="py-3 px-4">Model & Ref #</th>
+                                <th class="py-3 px-4">On-Screen Feature / Q-Modification</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-bond-border bg-white">
+                            <!-- Table rows dynamically populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DATA ANALYTICS & VISUALIZATIONS -->
+        <section id="analytics" class="scroll-mt-24 space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-bond-border shadow-sm space-y-6">
+                <div>
+                    <div class="flex items-center space-x-2 text-bond-gold text-xs font-bold uppercase tracking-wider">
+                        <span>◆ Horological Data Analytics</span>
+                    </div>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-bond-dark mt-1">
+                        Brand Share & Era Dynamics
+                    </h2>
+                    <p class="text-bond-muted text-sm mt-2">
+                        Analyze how the official franchise shifted horological partners over 60 years. The visualizations below highlight brand representation across the 25 official films and watch count per actor era.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <!-- Chart 1: Brand Share -->
+                    <div class="bg-bond-bg p-6 rounded-xl border border-bond-border space-y-3">
+                        <h3 class="font-serif font-bold text-bond-dark text-lg text-center">
+                            Brand Representation Across 25 Bond Films
+                        </h3>
+                        <p class="text-xs text-bond-muted text-center">
+                            Calculated based on identified screen appearances and military lineage
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="brandChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Watch Count per Bond Era -->
+                    <div class="bg-bond-bg p-6 rounded-xl border border-bond-border space-y-3">
+                        <h3 class="font-serif font-bold text-bond-dark text-lg text-center">
+                            Timepieces Featured per Bond Era
+                        </h3>
+                        <p class="text-xs text-bond-muted text-center">
+                            Includes multi-watch deployments (e.g., Roger Moore wearing up to 4 models in one film)
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="eraChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Q-BRANCH GADGET VAULT -->
+        <section id="gadget-vault" class="scroll-mt-24 space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-bond-border shadow-sm space-y-6">
+                <div>
+                    <div class="flex items-center space-x-2 text-bond-gold text-xs font-bold uppercase tracking-wider">
+                        <span>◆ Top Secret Field Modifications</span>
+                    </div>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-bond-dark mt-1">
+                        Q-Branch Horological Gadget Vault
+                    </h2>
+                    <p class="text-bond-muted text-sm mt-2">
+                        While Bond's literary creator Ian Fleming favored unmodified utility timepieces, cinema's Q-Branch transformed Bond's wristwatches into deadly survival gadgets. Click any gadget icon below to inspect its film debut and field operation logic.
+                    </p>
+                </div>
+
+                <!-- Gadget Interactive Showcase -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Gadget List Menu -->
+                    <div id="gadget-menu" class="space-y-2">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Gadget Detail Card -->
+                    <div id="gadget-display" class="md:col-span-2 bg-bond-dark text-white p-6 rounded-xl border border-bond-gold/40 flex flex-col justify-between space-y-4">
+                        <!-- Dynamically filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: HOROLOGICAL ERAS DEEP DIVE -->
+        <section id="eras" class="scroll-mt-24 space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-bond-border shadow-sm space-y-6">
+                <div>
+                    <div class="flex items-center space-x-2 text-bond-gold text-xs font-bold uppercase tracking-wider">
+                        <span>◆ Historical Narrative & Production History</span>
+                    </div>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-bond-dark mt-1">
+                        Cinematic Eras & Horological Evolution
+                    </h2>
+                    <p class="text-bond-muted text-sm mt-2">
+                        Explore the socio-cultural, technical, and commercial developments behind James Bond's timepieces across six actor tenures.
+                    </p>
+                </div>
+
+                <!-- Era Tabs -->
+                <div class="flex flex-wrap border-b border-bond-border gap-2 text-sm font-medium" id="era-tabs">
+                    <button data-era="connery" class="era-tab-btn py-2 px-4 border-b-2 border-bond-gold text-bond-dark font-bold">Sean Connery</button>
+                    <button data-era="lazenby" class="era-tab-btn py-2 px-4 border-b-2 border-transparent text-bond-muted hover:text-bond-dark">George Lazenby</button>
+                    <button data-era="moore" class="era-tab-btn py-2 px-4 border-b-2 border-transparent text-bond-muted hover:text-bond-dark">Roger Moore</button>
+                    <button data-era="dalton" class="era-tab-btn py-2 px-4 border-b-2 border-transparent text-bond-muted hover:text-bond-dark">Timothy Dalton</button>
+                    <button data-era="brosnan" class="era-tab-btn py-2 px-4 border-b-2 border-transparent text-bond-muted hover:text-bond-dark">Pierce Brosnan</button>
+                    <button data-era="craig" class="era-tab-btn py-2 px-4 border-b-2 border-transparent text-bond-muted hover:text-bond-dark">Daniel Craig</button>
+                </div>
+
+                <!-- Era Tab Content Display Container -->
+                <div id="era-content-display" class="bg-bond-bg p-6 rounded-xl border border-bond-border space-y-4">
+                    <!-- JS injects era text dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: VINTAGE MARKET & AUCTION PREMIUM -->
+        <section id="market" class="scroll-mt-24 space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-bond-border shadow-sm space-y-6">
+                <div>
+                    <div class="flex items-center space-x-2 text-bond-gold text-xs font-bold uppercase tracking-wider">
+                        <span>◆ Horological Economics</span>
+                    </div>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-bond-dark mt-1">
+                        Auction Market & Valuation Impact
+                    </h2>
+                    <p class="text-bond-muted text-sm mt-2">
+                        The "James Bond effect" generates unprecedented valuation premiums in secondary watch auctions. Below is a comparison of original retail pricing versus real-world auction sales for screen-used and associate models.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="bg-bond-bg p-6 rounded-xl border border-bond-border space-y-3">
+                        <h3 class="font-serif font-bold text-bond-dark text-lg text-center">
+                            Original Retail vs. Recent Auction Values ($ USD)
+                        </h3>
+                        <p class="text-xs text-bond-muted text-center">
+                            Highlights iconic vintage references associated with Bond films
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="auctionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 text-sm text-bond-text leading-relaxed">
+                        <div class="bg-bond-bg p-4 rounded-xl border border-bond-border space-y-2">
+                            <h4 class="font-serif font-bold text-bond-dark text-base">Rolex Submariner Ref. 6538 "Big Crown"</h4>
+                            <p class="text-xs text-bond-muted">
+                                Originally sold in 1962 for approximately $150. Today, pristine vintage 6538 models command between $200,000 and $500,000+ at global horological auctions due to their association with Sean Connery's early films.
+                            </p>
+                        </div>
+                        <div class="bg-bond-bg p-4 rounded-xl border border-bond-border space-y-2">
+                            <h4 class="font-serif font-bold text-bond-dark text-base">Breitling Top Time Ref. 2002 (Geiger Counter)</h4>
+                            <p class="text-xs text-bond-muted">
+                                The original screen-used prop from 1965's <em>Thunderball</em> was discovered at an English car boot sale in 2013 for £25. It subsequently fetched over £103,800 ($160,000+) at Sotheby's.
+                            </p>
+                        </div>
+                        <div class="bg-bond-bg p-4 rounded-xl border border-bond-border space-y-2">
+                            <h4 class="font-serif font-bold text-bond-dark text-base">Seiko Digital Resurgence</h4>
+                            <p class="text-xs text-bond-muted">
+                                Mass-market digital references from the late 1970s and 80s (e.g., Seiko 0674-5009 and G757-5020) experienced renewed collector interest, transforming vintage quartz modules into sought-after luxury collectibles.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Detailed Watch View -->
+    <div id="watch-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl border border-bond-border overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-bond-dark text-white p-6 flex justify-between items-start">
+                <div>
+                    <div id="modal-film-year" class="text-xs text-bond-gold uppercase tracking-wider font-semibold">1962 • DR. NO</div>
+                    <h3 id="modal-title" class="font-serif text-2xl font-bold mt-1">Rolex Submariner Ref. 6538</h3>
+                    <p id="modal-actor" class="text-xs text-slate-300 mt-1">Actor: Sean Connery</p>
+                </div>
+                <button id="modal-close" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar space-y-4 text-sm text-bond-text">
+                <div>
+                    <h4 class="font-serif font-bold text-bond-dark text-xs uppercase tracking-wider text-bond-gold">Trademark / Brand</h4>
+                    <p id="modal-brand" class="text-base font-semibold text-bond-dark mt-0.5">Rolex</p>
+                </div>
+                <div>
+                    <h4 class="font-serif font-bold text-bond-dark text-xs uppercase tracking-wider text-bond-gold">Specific Model & Reference</h4>
+                    <p id="modal-ref" class="text-base text-bond-dark mt-0.5">Submariner Reference 6538 ("Big Crown")</p>
+                </div>
+                <div>
+                    <h4 class="font-serif font-bold text-bond-dark text-xs uppercase tracking-wider text-bond-gold">On-Screen Feature / Q-Branch Modification</h4>
+                    <p id="modal-gadget" class="text-sm bg-bond-bg p-3 rounded-lg border border-bond-border mt-1 leading-relaxed">
+                        Standard timekeeping; worn on a strap during field operations.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-serif font-bold text-bond-dark text-xs uppercase tracking-wider text-bond-gold">Historical Narrative & Context</h4>
+                    <p id="modal-desc" class="text-xs text-bond-muted leading-relaxed mt-1">
+                        Detailed historical notes regarding this watch's selection during filming...
+                    </p>
+                </div>
+            </div>
+            <div class="bg-bond-bg px-6 py-3 border-t border-bond-border text-right">
+                <button id="modal-close-btn" class="bg-bond-dark text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-slate-800">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-bond-dark text-slate-400 py-8 border-t border-slate-800 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+            <p class="font-serif text-white text-sm">jamesbond.watch — The Cinematic Horology of James Bond 007</p>
+            <p>Data compiled from EON Productions filmography (1962–2021) and horological research archives.</p>
+            <p class="text-slate-500">Designed for interactive reference and education.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // MASTER DATA CATALOGUE
+        const bondWatchesData = [
+            {
+                year: 1962,
+                film: "Dr. No",
+                actor: "Sean Connery",
+                brand: "Rolex / Gruen",
+                model: "Rolex Submariner Ref. 6538; Gruen Precision Ref. 510",
+                gadget: "Standard timekeeping; dress watch worn in opening casino scene.",
+                isGadget: false,
+                desc: "Producer Cubby Broccoli handed Connery his personal Submariner 6538 on set. Connery also wore a dressy gold Gruen Precision 510 in the opening baccarat casino scene."
+            },
+            {
+                year: 1963,
+                film: "From Russia with Love",
+                actor: "Sean Connery",
+                brand: "Rolex",
+                model: "Rolex Submariner Ref. 6538",
+                gadget: "Unmodified standard dive watch worn on leather strap.",
+                isGadget: false,
+                desc: "Connery retained the Rolex Submariner Ref. 6538, continuing the rugged tool-watch identity established in Dr. No."
+            },
+            {
+                year: 1964,
+                film: "Goldfinger",
+                actor: "Sean Connery",
+                brand: "Rolex",
+                model: "Rolex Submariner Ref. 6538",
+                gadget: "Unmodified; worn on an undersized fabric ribbon strap.",
+                isGadget: false,
+                desc: "Birthed the 'Bond NATO' legend. The 16mm nylon strap was noticeably too narrow for the 20mm lugs, exposing the spring bars in a famous close-up."
+            },
+            {
+                year: 1965,
+                film: "Thunderball",
+                actor: "Sean Connery",
+                brand: "Rolex / Breitling",
+                model: "Rolex Submariner Ref. 6538; Breitling Top Time Ref. 2002",
+                gadget: "Breitling equipped with an integrated Geiger counter.",
+                isGadget: true,
+                desc: "Marks the first time Q-Branch modified Bond's watch with a functional field gadget—a Geiger counter housed in a custom outer casing to locate stolen nuclear weapons."
+            },
+            {
+                year: 1967,
+                film: "You Only Live Twice",
+                actor: "Sean Connery",
+                brand: "Gruen",
+                model: "Gruen Precision Ref. 510",
+                gadget: "Dress watch worn under suit cuff; un-gadgetized.",
+                isGadget: false,
+                desc: "Connery wore the slim gold Gruen dress watch under his tailored cuffs while operating in Japan."
+            },
+            {
+                year: 1969,
+                film: "On Her Majesty's Secret Service",
+                actor: "George Lazenby",
+                brand: "Rolex",
+                model: "Rolex Submariner Ref. 5513 & Ref. 6358; Rolex Chronograph Ref. 6238",
+                gadget: "Standard mechanical timekeeping and chronograph functions.",
+                isGadget: false,
+                desc: "Lazenby wore three Rolex models, including the Ref. 6238 silver-dial chronograph—widely recognized as the predecessor ('Pre-Daytona') to the Rolex Daytona line."
+            },
+            {
+                year: 1971,
+                film: "Diamonds Are Forever",
+                actor: "Sean Connery",
+                brand: "Gruen",
+                model: "Gruen Precision Ref. 510",
+                gadget: "Gold dress watch cameo.",
+                isGadget: false,
+                desc: "Connery returned for a final early stint wearing his trusted gold Gruen dress timepiece."
+            },
+            {
+                year: 1973,
+                film: "Live and Let Die",
+                actor: "Roger Moore",
+                brand: "Hamilton / Rolex",
+                model: "Hamilton Pulsar P2-2900 LED; Rolex Submariner Ref. 5513",
+                gadget: "Submariner modified with hyper-magnetic field and buzz-saw bezel.",
+                isGadget: true,
+                desc: "Featured the futuristic red LED Pulsar alongside Q's iconic modified Submariner 5513 with a buzz-saw bezel and hyper-magnetic field that could deflect bullets."
+            },
+            {
+                year: 1974,
+                film: "The Man with the Golden Gun",
+                actor: "Roger Moore",
+                brand: "Rolex",
+                model: "Rolex Submariner Ref. 5513",
+                gadget: "Standard tool watch.",
+                isGadget: false,
+                desc: "Moore wore a classic unmodified Submariner 5513 on an Oystersteel bracelet."
+            },
+            {
+                year: 1977,
+                film: "The Spy Who Loved Me",
+                actor: "Roger Moore",
+                brand: "Seiko / Rolex",
+                model: "Seiko 0674-5009 LC; Rolex GMT-Master Ref. 1675",
+                gadget: "Seiko fitted with a miniature Q-Branch ticker-tape printer.",
+                isGadget: true,
+                desc: "Began the iconic Seiko partnership. The digital 0674-5009 printed paper strip messages direct from MI6 headquarters."
+            },
+            {
+                year: 1979,
+                film: "Moonraker",
+                actor: "Roger Moore",
+                brand: "Seiko",
+                model: "Seiko M354 Memory Bank Calendar",
+                gadget: "Concealed explosive charge and remote detonation wire.",
+                isGadget: true,
+                desc: "Integrated a flat plastic explosive charge in its caseback, allowing Bond to blow open a launchpad hatch and escape."
+            },
+            {
+                year: 1981,
+                film: "For Your Eyes Only",
+                actor: "Roger Moore",
+                brand: "Seiko",
+                model: "Seiko 7549-7009 'Golden Tuna'; Seiko H357-5040 Duo Display",
+                gadget: "H357 equipped with digital LED message display and speaker.",
+                isGadget: true,
+                desc: "Features the heavy-duty 'Golden Tuna' diver alongside an analog-digital Seiko H357 equipped with an LED ticker display and microphone."
+            },
+            {
+                year: 1983,
+                film: "Octopussy",
+                actor: "Roger Moore",
+                brand: "Seiko",
+                model: "Seiko Sports 100 Ref. G757-5020; Seiko Liquid Crystal TV Watch",
+                gadget: "G757 fitted with homing device grid; TV watch displays live video feed.",
+                isGadget: true,
+                desc: "The G757 tracked a homing beacon grid on its digital matrix, while a secondary Seiko TV watch displayed live video feeds on screen."
+            },
+            {
+                year: 1985,
+                film: "A View to a Kill",
+                actor: "Roger Moore",
+                brand: "Seiko / Rolex",
+                model: "Seiko 7A28-7020; Seiko H558-5000; Seiko 6923-8080; Rolex Datejust Ref. 16013",
+                gadget: "Standard quartz timekeeping and multi-function chronographs.",
+                isGadget: false,
+                desc: "Moore wore four watches, including the Seiko 7A28-7020—the world's first analog quartz chronograph—and a two-tone Rolex Datejust."
+            },
+            {
+                year: 1987,
+                film: "The Living Daylights",
+                actor: "Timothy Dalton",
+                brand: "TAG Heuer",
+                model: "TAG Heuer Professional 200M Night-Dive Ref. 980.031",
+                gadget: "Black PVD case with fully luminous dial for low-light tactical operations.",
+                isGadget: false,
+                desc: "Under Dalton's gritty tenure, Bond wore a PVD-coated TAG Heuer with a full phosphorescent dial designed for night warfare."
+            },
+            {
+                year: 1989,
+                film: "Licence to Kill",
+                actor: "Timothy Dalton",
+                brand: "Rolex",
+                model: "Rolex Submariner Ref. 16610",
+                gadget: "Standard dive watch.",
+                isGadget: false,
+                desc: "Marked the final screen appearance of a Rolex watch in the official EON James Bond franchise."
+            },
+            {
+                year: 1995,
+                film: "GoldenEye",
+                actor: "Pierce Brosnan",
+                brand: "Omega",
+                model: "Omega Seamaster Professional 300M Quartz Ref. 2541.80",
+                gadget: "Laser cutter built into bezel; remote detonator via helium escape valve.",
+                isGadget: true,
+                desc: "Initiated Omega's landmark partnership. Q added a high-powered laser cutter in the bezel and a detonator in the helium escape valve."
+            },
+            {
+                year: 1997,
+                film: "Tomorrow Never Dies",
+                actor: "Pierce Brosnan",
+                brand: "Omega",
+                model: "Omega Seamaster Professional 300M Automatic Ref. 2531.80.00",
+                gadget: "Detonator cap integrated into the watch structure.",
+                isGadget: true,
+                desc: "Brosnan upgraded to the automatic Caliber 1120 Seamaster, equipped with an integrated detachable detonator cap."
+            },
+            {
+                year: 1999,
+                film: "The World Is Not Enough",
+                actor: "Pierce Brosnan",
+                brand: "Omega",
+                model: "Omega Seamaster Professional 300M Automatic Ref. 2531.80.00",
+                gadget: "Micro-grappling hook with 50-foot cord and ultra-bright illumination dial.",
+                isGadget: true,
+                desc: "Featured a built-in micro-grappling hook with a 50-foot Kevlar line capable of lifting 800 pounds, plus intense backlight illumination."
+            },
+            {
+                year: 2002,
+                film: "Die Another Day",
+                actor: "Pierce Brosnan",
+                brand: "Omega",
+                model: "Omega Seamaster Professional 300M Automatic Ref. 2531.80.00",
+                gadget: "Laser emitting from the crown; removable explosive pin detonator.",
+                isGadget: true,
+                desc: "Integrated a crown-emitted laser capable of cutting ice and a removable explosive pin activated via bezel rotation."
+            },
+            {
+                year: 2006,
+                film: "Casino Royale",
+                actor: "Daniel Craig",
+                brand: "Omega",
+                model: "Omega Seamaster Planet Ocean 600M Ref. 2900.50.91; Seamaster Diver 300M Ref. 2220.80.00",
+                gadget: "Tactical rubber strap deployment; Co-Axial movement; no gadgetry.",
+                isGadget: false,
+                desc: "Rebooted Bond's style with no gadgets. Wore the Planet Ocean on rubber for tactical scenes and the Co-Axial Seamaster 300M for high-stakes poker."
+            },
+            {
+                year: 2008,
+                film: "Quantum of Solace",
+                actor: "Daniel Craig",
+                brand: "Omega",
+                model: "Omega Seamaster Planet Ocean 600M Ref. 2201.50.00",
+                gadget: "Unmodified rugged dive watch on steel bracelet.",
+                isGadget: false,
+                desc: "A sleek 42mm black-dial Planet Ocean worn on a stainless steel bracelet throughout intense action sequences."
+            },
+            {
+                year: 2012,
+                film: "Skyfall",
+                actor: "Daniel Craig",
+                brand: "Omega",
+                model: "Omega Seamaster Planet Ocean 600M Ref. 232.30.42.21.01.001; Aqua Terra 150M Ref. 231.10.39.21.03.001",
+                gadget: "Pure horological precision and water resistance; non-gadgetized.",
+                isGadget: false,
+                desc: "Wore the Planet Ocean Co-Axial 8500 in Istanbul and a blue-dial Aqua Terra for formal London sequences."
+            },
+            {
+                year: 2015,
+                film: "Spectre",
+                actor: "Daniel Craig",
+                brand: "Omega",
+                model: "Omega Seamaster Aqua Terra Ref. 231.10.42.21.03.003; Seamaster 300 'Spectre' Ref. 233.32.41.21.01.001",
+                gadget: "12-hour bi-directional bezel; integrated explosive countdown gadget.",
+                isGadget: true,
+                desc: "Brought gadgets back to Craig's wrist with the Seamaster 300 'Spectre' edition featuring a NATO strap and an explosive countdown mechanism."
+            },
+            {
+                year: 2021,
+                film: "No Time to Die",
+                actor: "Daniel Craig",
+                brand: "Omega",
+                model: "Omega Seamaster Diver 300M '007 Edition' Ref. 210.90.42.20.01.001",
+                gadget: "Grade 2 Titanium construction; high-frequency Electro-Magnetic Pulse (EMP) device.",
+                isGadget: true,
+                desc: "Co-designed by Daniel Craig. Crafted from Grade 2 Titanium with a tropical brown dial and modified by Q-Branch with a high-power EMP pulse device."
+            },
+            {
+                year: 1944,
+                film: "Royal Navy Lineage / Heritage",
+                actor: "Commander James Bond Context",
+                brand: "Vertex",
+                model: "Vertex W.W.W. 'Dirty Dozen' / Military Issue",
+                gadget: "Military-spec waterproof wrist watch with luminous dial & broad arrow marking.",
+                isGadget: false,
+                desc: "Vertex was the sole British brand among the legendary 'Dirty Dozen' watchmakers commissioned by the British Ministry of Defence (MoD) in WWII. Tied to Ian Fleming's Naval Intelligence background and Commander Bond's Royal Navy roots, Vertex represents authentic British military horology."
+            }
+        ];
+
+        // Q-VAULT GADGET DATA
+        const gadgetVaultData = [
+            {
+                id: "geiger",
+                title: "Geiger Counter Sensor",
+                film: "Thunderball (1965)",
+                brandModel: "Breitling Top Time Ref. 2002",
+                actor: "Sean Connery",
+                desc: "Modified by Q-Branch with a bespoke outer casing housing a mini Geiger counter. It allowed Bond to discreetly detect stolen atomic warheads aboard Largo's yacht."
+            },
+            {
+                id: "buzzsaw",
+                title: "Buzz-Saw Bezel & Magnet",
+                film: "Live and Let Die (1973)",
+                brandModel: "Rolex Submariner Ref. 5513",
+                actor: "Roger Moore",
+                desc: "Features a high-speed serrated rotating bezel that acted as a circular saw to cut through binding ropes, and an ultra-powerful electromagnet strong enough to deflect incoming bullets."
+            },
+            {
+                id: "printer",
+                title: "Ticker-Tape Printer",
+                film: "The Spy Who Loved Me (1977)",
+                brandModel: "Seiko 0674-5009 LC",
+                actor: "Roger Moore",
+                desc: "Equipped with a tiny integrated printer module. Messages sent directly from M at MI6 Headquarters popped out as printed paper strips directly from the top watch bezel."
+            },
+            {
+                id: "explosive",
+                title: "Plastic Explosive Charge",
+                film: "Moonraker (1979)",
+                brandModel: "Seiko M354 Memory Bank Calendar",
+                actor: "Roger Moore",
+                desc: "Concealed a flat sheet of plastic explosive inside the caseback with a thin remote detonation wire, enabling Bond to breach a rocket launch chamber hatch."
+            },
+            {
+                id: "laser",
+                title: "Bezel / Crown Laser Cutter",
+                film: "GoldenEye (1995) / Die Another Day (2002)",
+                brandModel: "Omega Seamaster Professional 300M",
+                actor: "Pierce Brosnan",
+                desc: "Emitted a high-powered thermal laser beam capable of slicing through armored steel train floors and thick ice walls in seconds."
+            },
+            {
+                id: "emp",
+                title: "High-Frequency EMP Generator",
+                film: "No Time to Die (2021)",
+                brandModel: "Omega Seamaster Diver 300M '007 Edition'",
+                actor: "Daniel Craig",
+                desc: "Engineered by Q to emit a localized high-intensity Electromagnetic Pulse capable of disabling digital security grids and frying bionic implants instantly."
+            }
+        ];
+
+        // ERA NARRATIVE TEXTS
+        const eraTexts = {
+            connery: `
+                <h3 class="font-serif font-bold text-bond-dark text-xl mb-2">The Sean Connery Era (1962–1967, 1971)</h3>
+                <p class="text-xs text-bond-gold font-semibold uppercase tracking-wider mb-3">Mechanical Tool Watches & Early Spycraft</p>
+                <p class="text-sm text-bond-text leading-relaxed">
+                    The film series began with <em>Dr. No</em> (1962), establishing James Bond's connection with rugged luxury tool watches. Lacking an official corporate sponsor, producer Cubby Broccoli reportedly took his personal <strong>Rolex Submariner Reference 6538</strong> off his wrist and handed it to Sean Connery. Known as the 'Big Crown' Submariner, it featured a 38mm stainless steel case and a self-winding movement.
+                </p>
+                <p class="text-sm text-bond-text leading-relaxed mt-2">
+                    In <em>Goldfinger</em> (1964), the watch achieved legendary status shot on a 16mm fabric strap that was slightly too narrow for the 20mm lug width—giving birth to the 'Bond NATO' strap term. By 1965's <em>Thunderball</em>, Q-Branch introduced its first gadgetized watch: a <strong>Breitling Top Time Ref. 2002</strong> fitted with a working Geiger counter.
+                </p>
+            `,
+            lazenby: `
+                <h3 class="font-serif font-bold text-bond-dark text-xl mb-2">The George Lazenby Interlude (1969)</h3>
+                <p class="text-xs text-bond-gold font-semibold uppercase tracking-wider mb-3">Pre-Daytona Chronographs & Pure Horology</p>
+                <p class="text-sm text-bond-text leading-relaxed">
+                    In <em>On Her Majesty's Secret Service</em> (1969), George Lazenby wore three distinct Rolex references. Early in the film, Bond relies on the classic Rolex Submariner Ref. 5513. While breaking into a safe at Piz Gloria, Bond places a Rolex Submariner Ref. 6358 with an unscrewed crown atop the copier apparatus.
+                </p>
+                <p class="text-sm text-bond-text leading-relaxed mt-2">
+                    Later in the film, Lazenby wears a <strong>Rolex Reference 6238</strong>—a manual-wind chronograph with a silver dial, celebrated by collectors as the direct precursor ('Pre-Daytona') to the iconic Rolex Daytona line.
+                </p>
+            `,
+            moore: `
+                <h3 class="font-serif font-bold text-bond-dark text-xl mb-2">The Roger Moore Era (1973–1985)</h3>
+                <p class="text-xs text-bond-gold font-semibold uppercase tracking-wider mb-3">The Digital Quartz Revolution & Q-Branch Escalation</p>
+                <p class="text-sm text-bond-text leading-relaxed">
+                    Roger Moore's tenure coincided with the global Quartz Revolution. <em>Live and Let Die</em> (1973) opened with Bond wearing a red LED <strong>Hamilton Pulsar P2-2900</strong> alongside Q's heavily modified Rolex Submariner Ref. 5513 (fitted with a buzz-saw bezel and hyper-magnetic generator).
+                </p>
+                <p class="text-sm text-bond-text leading-relaxed mt-2">
+                    From 1977 onwards, EON Productions partnered with Seiko, bringing high-tech digital displays on screen: mini ticker-tape printers (<em>The Spy Who Loved Me</em>), plastic explosives (<em>Moonraker</em>), radio-recievers and voice-tickers (<em>For Your Eyes Only</em>), homing radar matrices and live TV displays (<em>Octopussy</em>), and early quartz chronographs (<em>A View to a Kill</em>).
+                </p>
+            `,
+            dalton: `
+                <h3 class="font-serif font-bold text-bond-dark text-xl mb-2">The Timothy Dalton Era (1987–1989)</h3>
+                <p class="text-xs text-bond-gold font-semibold uppercase tracking-wider mb-3">Tactical Utility & The Transition Back to Steel</p>
+                <p class="text-sm text-bond-text leading-relaxed">
+                    Timothy Dalton brought a realistic, grounded tone to Bond, reflected in his equipment. In <em>The Living Daylights</em> (1987), Bond wore a <strong>TAG Heuer Professional 200M Night-Dive Ref. 980.031</strong>. Built for low-light night operations, it featured a black PVD-coated steel case and a fully phosphorescent dial glowing bright green.
+                </p>
+                <p class="text-sm text-bond-text leading-relaxed mt-2">
+                    In <em>Licence to Kill</em> (1989), Dalton returned to the classic stainless steel <strong>Rolex Submariner Ref. 16610</strong>, marking the final time a Rolex watch appeared in an official James Bond film.
+                </p>
+            `,
+            brosnan: `
+                <h3 class="font-serif font-bold text-bond-dark text-xl mb-2">The Pierce Brosnan Era (1995–2002)</h3>
+                <p class="text-xs text-bond-gold font-semibold uppercase tracking-wider mb-3">The Strategic Omega Partnership & High Gadgetization</p>
+                <p class="text-sm text-bond-text leading-relaxed">
+                    Costume designer Lindy Hemming insisted that as a Royal Navy Commander, Bond should wear an <strong>Omega Seamaster</strong>—a timepiece with authentic British naval WWII lineage. This launched an exclusive global partnership between EON Productions and Omega Watch Co.
+                </p>
+                <p class="text-sm text-bond-text leading-relaxed mt-2">
+                    Brosnan debuted the blue wave-dial <strong>Omega Seamaster Professional 300M Quartz Ref. 2541.80</strong> in <em>GoldenEye</em> (1995), before adopting the automatic mechanical Ref. 2531.80.00 for his next three films. Q modified these models with laser cutters, explosive detonators, and micro-grappling hooks.
+                </p>
+            `,
+            craig: `
+                <h3 class="font-serif font-bold text-bond-dark text-xl mb-2">The Daniel Craig Era (2006–2021)</h3>
+                <p class="text-xs text-bond-gold font-semibold uppercase tracking-wider mb-3">Luxury Co-Axial Modernity & Heritage Aesthetics</p>
+                <p class="text-sm text-bond-text leading-relaxed">
+                    Daniel Craig's reboot removed fantasy gadgets in favor of pure horology in <em>Casino Royale</em> (2006), featuring the rugged <strong>Omega Seamaster Planet Ocean 600M</strong> alongside the classic blue Seamaster 300M Co-Axial.
+                </p>
+                <p class="text-sm text-bond-text leading-relaxed mt-2">
+                    Gadgets returned in <em>Spectre</em> (2015) with an explosive countdown timer built into a vintage-inspired Seamaster 300 on a NATO strap. Craig directly co-designed his final timepiece for <em>No Time to Die</em> (2021)—a lightweight Grade 2 Titanium Seamaster Diver 300M '007 Edition' equipped with a powerful EMP generator.
+                </p>
+            `
+        };
+
+        // DOM ELEMENTS & INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            initMobileMenu();
+            renderCards(bondWatchesData);
+            renderTable(bondWatchesData);
+            initSearchAndFilters();
+            initCharts();
+            initGadgetVault();
+            initEraTabs();
+            initModal();
+        });
+
+        // Mobile Menu Toggle
+        function initMobileMenu() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+
+        // Render Cards
+        function renderCards(data) {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-bond-muted">
+                        <p class="text-base font-semibold">No watches matched your filter criteria.</p>
+                        <p class="text-xs mt-1">Try broadening your search term or resetting filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-bond-border rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-4 group cursor-pointer";
+                
+                const gadgetBadge = item.isGadget 
+                    ? `<span class="bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Q-Gadget</span>`
+                    : `<span class="bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Standard Horology</span>`;
+
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-serif font-bold text-bond-gold uppercase tracking-wider">${item.year} • ${item.film}</span>
+                            ${gadgetBadge}
+                        </div>
+                        <h3 class="font-serif text-lg font-bold text-bond-dark group-hover:text-bond-gold transition-colors">${item.brand}</h3>
+                        <p class="text-xs font-semibold text-slate-700">${item.model}</p>
+                        <p class="text-xs text-bond-muted line-clamp-2">${item.gadget}</p>
+                    </div>
+                    <div class="pt-3 border-t border-bond-border flex justify-between items-center text-xs">
+                        <span class="text-slate-500">Actor: <strong class="text-bond-dark">${item.actor}</strong></span>
+                        <span class="text-bond-gold font-bold group-hover:translate-x-1 transition-transform">Details →</span>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => openModal(item));
+                container.appendChild(card);
+            });
+        }
+
+        // Render Table
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors cursor-pointer";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-bond-dark">
+                        <span class="text-bond-gold font-bold mr-1">${item.year}</span> ${item.film}
+                    </td>
+                    <td class="py-3 px-4 text-xs">${item.actor}</td>
+                    <td class="py-3 px-4 text-xs font-semibold">${item.brand}</td>
+                    <td class="py-3 px-4 text-xs text-slate-600">${item.model}</td>
+                    <td class="py-3 px-4 text-xs text-bond-muted">${item.gadget}</td>
+                `;
+                tr.addEventListener('click', () => openModal(item));
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Search and Filters Handler
+        function initSearchAndFilters() {
+            const searchInput = document.getElementById('search-input');
+            const brandSelect = document.getElementById('filter-brand');
+            const actorSelect = document.getElementById('filter-actor');
+            const gadgetSelect = document.getElementById('filter-gadget');
+            const resetBtn = document.getElementById('reset-filters-btn');
+            const visibleCount = document.getElementById('visible-count');
+
+            const gridBtn = document.getElementById('view-grid-btn');
+            const tableBtn = document.getElementById('view-table-btn');
+            const cardsContainer = document.getElementById('cards-container');
+            const tableContainer = document.getElementById('table-container');
+
+            // View toggle
+            gridBtn.addEventListener('click', () => {
+                gridBtn.className = "px-3 py-1 text-xs rounded font-medium bg-bond-dark text-white";
+                tableBtn.className = "px-3 py-1 text-xs rounded font-medium text-bond-muted hover:text-bond-dark";
+                cardsContainer.classList.remove('hidden');
+                tableContainer.classList.add('hidden');
+            });
+
+            tableBtn.addEventListener('click', () => {
+                tableBtn.className = "px-3 py-1 text-xs rounded font-medium bg-bond-dark text-white";
+                gridBtn.className = "px-3 py-1 text-xs rounded font-medium text-bond-muted hover:text-bond-dark";
+                tableContainer.classList.remove('hidden');
+                cardsContainer.classList.add('hidden');
+            });
+
+            function filterData() {
+                const query = searchInput.value.toLowerCase().trim();
+                const brandVal = brandSelect.value;
+                const actorVal = actorSelect.value;
+                const gadgetVal = gadgetSelect.value;
+
+                const filtered = bondWatchesData.filter(item => {
+                    const matchQuery = !query || 
+                        item.film.toLowerCase().includes(query) ||
+                        item.brand.toLowerCase().includes(query) ||
+                        item.model.toLowerCase().includes(query) ||
+                        item.gadget.toLowerCase().includes(query) ||
+                        item.actor.toLowerCase().includes(query) ||
+                        item.year.toString().includes(query);
+
+                    const matchBrand = brandVal === 'ALL' || item.brand.includes(brandVal);
+                    const matchActor = actorVal === 'ALL' || item.actor === actorVal;
+                    
+                    let matchGadget = true;
+                    if (gadgetVal === 'GADGET') matchGadget = item.isGadget === true;
+                    if (gadgetVal === 'STANDARD') matchGadget = item.isGadget === false;
+
+                    return matchQuery && matchBrand && matchActor && matchGadget;
+                });
+
+                renderCards(filtered);
+                renderTable(filtered);
+                visibleCount.textContent = filtered.length;
+
+                // Show reset button if any filter is active
+                if (query || brandVal !== 'ALL' || actorVal !== 'ALL' || gadgetVal !== 'ALL') {
+                    resetBtn.classList.remove('hidden');
+                } else {
+                    resetBtn.classList.add('hidden');
+                }
+            }
+
+            searchInput.addEventListener('input', filterData);
+            brandSelect.addEventListener('change', filterData);
+            actorSelect.addEventListener('change', filterData);
+            gadgetSelect.addEventListener('change', filterData);
+
+            resetBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                brandSelect.value = 'ALL';
+                actorSelect.value = 'ALL';
+                gadgetSelect.value = 'ALL';
+                filterData();
+            });
+        }
+
+        // Modal Handler
+        function initModal() {
+            const modal = document.getElementById('watch-modal');
+            const closeBtn = document.getElementById('modal-close');
+            const closeBtn2 = document.getElementById('modal-close-btn');
+
+            const closeModal = () => modal.classList.add('hidden');
+            closeBtn.addEventListener('click', closeModal);
+            closeBtn2.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+        }
+
+        function openModal(item) {
+            document.getElementById('modal-film-year').textContent = `${item.year} • ${item.film.toUpperCase()}`;
+            document.getElementById('modal-title').textContent = item.model;
+            document.getElementById('modal-actor').textContent = `Actor: ${item.actor}`;
+            document.getElementById('modal-brand').textContent = item.brand;
+            document.getElementById('modal-ref').textContent = item.model;
+            document.getElementById('modal-gadget').textContent = item.gadget;
+            document.getElementById('modal-desc').textContent = item.desc;
+
+            document.getElementById('watch-modal').classList.remove('hidden');
+        }
+
+        // Chart.js Initializations
+        function initCharts() {
+            // Chart 1: Brand Distribution (Donut Chart)
+            const brandCtx = document.getElementById('brandChart').getContext('2d');
+            new Chart(brandCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Omega', 'Rolex', 'Seiko', 'Gruen', 'Vertex', 'TAG Heuer', 'Breitling', 'Hamilton'],
+                    datasets: [{
+                        data: [9, 8, 5, 3, 1, 1, 1, 1],
+                        backgroundColor: [
+                            '#c5a059', // Omega Gold
+                            '#0f172a', // Rolex Dark
+                            '#334155', // Seiko Slate
+                            '#64748b', // Gruen Light Slate
+                            '#15803d', // Vertex Military Green
+                            '#8b0000', // TAG Red
+                            '#d97706', // Breitling Amber
+                            '#475569'  // Hamilton
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Plus Jakarta Sans', size: 11 },
+                                boxWidth: 12
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return ` ${label}: ${value} Film / Heritage Appearances`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Watch Count per Bond Era (Bar Chart)
+            const eraCtx = document.getElementById('eraChart').getContext('2d');
+            new Chart(eraCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['S. Connery', 'G. Lazenby', 'R. Moore', 'T. Dalton', 'P. Brosnan', 'D. Craig'],
+                    datasets: [{
+                        label: 'Timepieces Deployed',
+                        data: [7, 3, 11, 2, 4, 7],
+                        backgroundColor: '#c5a059',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0, font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            ticks: { font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Chart 3: Vintage Valuation Chart (Line/Bar Chart)
+            const auctionCtx = document.getElementById('auctionChart').getContext('2d');
+            new Chart(auctionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Rolex 6538', 'Breitling Top Time', 'Omega Spectre', 'Omega Titanium NTTD'],
+                    datasets: [
+                        {
+                            label: 'Original Retail Price ($)',
+                            data: [150, 100, 7500, 9200],
+                            backgroundColor: '#94a3b8'
+                        },
+                        {
+                            label: 'Auction / Market Peak ($)',
+                            data: [350000, 160000, 180000, 200000],
+                            backgroundColor: '#c5a059'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'logarithmic',
+                            ticks: {
+                                callback: function(value) { return '$' + value.toLocaleString(); },
+                                font: { family: 'Plus Jakarta Sans', size: 9 }
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            ticks: { font: { family: 'Plus Jakarta Sans', size: 10 } },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 10 }, boxWidth: 10 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Q-Branch Vault Display Logic
+        function initGadgetVault() {
+            const menu = document.getElementById('gadget-menu');
+
+            menu.innerHTML = '';
+            gadgetVaultData.forEach((gadget, index) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3 rounded-xl border text-xs font-semibold transition-all ${
+                    index === 0 
+                        ? 'bg-bond-dark text-white border-bond-gold shadow' 
+                        : 'bg-white text-bond-dark border-bond-border hover:bg-slate-50'
+                }`;
+                btn.innerHTML = `
+                    <div class="text-[10px] text-bond-gold uppercase">${gadget.film}</div>
+                    <div class="text-sm font-bold mt-0.5">${gadget.title}</div>
+                `;
+                btn.addEventListener('click', () => {
+                    // Update active styles
+                    Array.from(menu.children).forEach(c => {
+                        c.className = "w-full text-left p-3 rounded-xl border text-xs font-semibold transition-all bg-white text-bond-dark border-bond-border hover:bg-slate-50";
+                    });
+                    btn.className = "w-full text-left p-3 rounded-xl border text-xs font-semibold transition-all bg-bond-dark text-white border-bond-gold shadow";
+
+                    renderGadgetDisplay(gadget);
+                });
+                menu.appendChild(btn);
+            });
+
+            renderGadgetDisplay(gadgetVaultData[0]);
+        }
+
+        function renderGadgetDisplay(gadget) {
+            const display = document.getElementById('gadget-display');
+            display.innerHTML = `
+                <div class="space-y-3">
+                    <div class="inline-block bg-bond-gold/20 text-bond-gold border border-bond-gold/40 text-[10px] px-2.5 py-0.5 rounded-full uppercase font-bold tracking-wider">
+                        Q-Branch Field Modification
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-white">${gadget.title}</h3>
+                    <div class="text-xs text-slate-300 space-y-1">
+                        <p><strong>Film:</strong> ${gadget.film}</p>
+                        <p><strong>Base Timepiece:</strong> ${gadget.brandModel}</p>
+                        <p><strong>Deployed By:</strong> ${gadget.actor}</p>
+                    </div>
+                    <p class="text-sm text-slate-200 leading-relaxed pt-2 border-t border-slate-700">
+                        ${gadget.desc}
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-700/80 text-right">
+                    <span class="text-[10px] text-bond-gold uppercase tracking-widest font-mono">Status: Q-Branch Operational</span>
+                </div>
+            `;
+        }
+
+        // Era Tabs Logic
+        function initEraTabs() {
+            const tabs = document.querySelectorAll('.era-tab-btn');
+            const display = document.getElementById('era-content-display');
+
+            display.innerHTML = eraTexts['connery'];
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const eraKey = tab.getAttribute('data-era');
+
+                    tabs.forEach(t => {
+                        t.className = "era-tab-btn py-2 px-4 border-b-2 border-transparent text-bond-muted hover:text-bond-dark";
+                    });
+                    tab.className = "era-tab-btn py-2 px-4 border-b-2 border-bond-gold text-bond-dark font-bold";
+
+                    display.innerHTML = eraTexts[eraKey];
+                });
+            });
+        }
+    </script>
+</body>
+</html>
